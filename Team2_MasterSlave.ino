@@ -35,7 +35,12 @@ void setup() {
 }
 
 void receiveEvent(){
-  int MasterSend = Wire.read();
+   while(1 < Wire.available()) // loop through all but the last
+  {
+    char c = Wire.read(); // receive byte as a character
+    Serial.print(c);         // print the character
+  } 
+  int MasterSend = Wire.read();       //reads handover byte from master1
   if (MasterSend == PACKET){
     MasterINIT = 1
   else {
