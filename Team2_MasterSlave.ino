@@ -1,4 +1,4 @@
-//--------MASTER code
+//--------Team 2 SLAVE/MASTER code
 
 #include "hardware/i2c.h"
 #include <Wire.h>
