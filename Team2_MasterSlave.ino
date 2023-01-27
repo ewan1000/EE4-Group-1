@@ -9,10 +9,12 @@
 #define TEAM2 52
 #define TEAM3 53
 
-byte x = 255;
-byte PACKET = 0x01;
-int MasterInit=0;
-int switch_pin=6;
+byte Z_Offset = 255;
+byte MT1 = 0x03;  //Master transfer 1
+byte MT2 = 0xAA;
+int SLAVE_INIT;
+int digitalSLAVE=0;
+int switch_pin = 6;
 int switch_val;
 
 void setup() {
