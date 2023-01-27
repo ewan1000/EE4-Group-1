@@ -60,6 +60,7 @@ void loop() {
     delay(500);
   }
   else if ((switch_val==LOW) && (MasterInit==0)){
-    delay(100);                                       //slave stuff
+    delay(100);   
+    setup();            //slave stuff
   }
 }
