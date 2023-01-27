@@ -13,8 +13,6 @@
 byte Z_Offset = 255;
 byte MT1 = 0x03;  //Master transfer 1
 byte MT2 = 0xAA;
-int SLAVE_INIT;
-int digitalSLAVE=0;
 int MasterInit=0;
 int switch_pin = 6;
 int switch_val;
@@ -70,7 +68,7 @@ void loop() {
   if ((switch_val==HIGH) && (MasterInit==1)){              //code to execute when master
     delay(1000);
     Wire.beginTransmission(Z_MOTION); 
-    Wire.write(x);        
+    Wire.write(Z_Offset);        
     Wire.endTransmission(); 
     delay(500);
     
@@ -80,7 +78,7 @@ void loop() {
     Wire.write(MT1);        
     Wire.write(MT2);     
     Wire.endTransmission(); 
-    digitalSLAVE = 1;
+    MasterInit = 0;
     delay(500);
     setup();
   }
