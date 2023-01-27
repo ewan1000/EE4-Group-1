@@ -66,13 +66,15 @@ void loop() {
   switch_val = digitalRead(switch_pin);
   //TEAM2 IS MASTER
   if ((switch_val==HIGH) && (MasterInit==1)){              //code to execute when master
+    
+    //ENTER YOUR TEAMS CODE HERE
     delay(1000);
     Wire.beginTransmission(Z_MOTION); 
     Wire.write(Z_Offset);        
     Wire.endTransmission(); 
     delay(500);
     
-    
+    //Master Handover to Team 3
     delay(1000);
     Wire.beginTransmission(TEAM3);  //This is sending handover to team3, Master2 writing to slave3
     Wire.write(MT1);        
