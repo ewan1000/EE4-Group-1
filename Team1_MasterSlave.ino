@@ -9,7 +9,8 @@
 #define TEAM2 52
 
 byte x = 10;
-byte y = 0x01;
+byte MT1 = 0x03;  //Master transfer 1
+byte MT2 = 0xAA;
 int SLAVE_INIT;
 int digitalSLAVE=0;
 int switch_pin = 6;
@@ -31,19 +32,15 @@ void setup() {
   else if ((switch_val==LOW) && (digitalSLAVE==1)) {     //SLAVE SETUP    //Potential issue: Does the setup function only get called once??
     Wire.begin(TEAM1);                                    //Could look into serial.available for acknowledgment, but this should be inside loop function
     Serial.begin(9600);
-    Wire.onReceive(receiveEvent);
+    Wire.onRequest(requestEvent);
     }   // start serial for output
 
 }
 
-void receiveEvent(int howmany){
-  int Data = Wire.read();          // receive byte as an integer
-  Serial.println(Data);            // print the integer
-  digitalWrite(LED_BUILTIN, HIGH);  //Board LED goes high
-  delay(500);
-  digitalWrite(LED_BUILTIN, LOW);  //Board LED goes high
+void requestEvent(int howmany){
         //need to send acknowledgement bit to team 2
-  Wire.write(1);  //Writes hexadecimal byte (or maybe just int 1) to master 
+  Wire.write(0x01);  //Writes hexadecimal byte (or maybe just int 1) to master //check byte
+  Wire.write(0xAA);     //data byte
 }
 
 void loop() {
@@ -55,10 +52,13 @@ void loop() {
     Wire.write(x);        
     Wire.endTransmission(); 
     delay(500);
+    
+    
     //Master handover to TEAM2
     delay(1000);
     Wire.beginTransmission(TEAM2);  //This is sending handover to team2, Master1 writing to slave2
-    Wire.write(y);        
+    Wire.write(MT1);        
+    Wire.write(MT2);     
     Wire.endTransmission(); 
     digitalSLAVE = 1;
     delay(500);
@@ -66,5 +66,6 @@ void loop() {
   }
   else if ((switch_val==LOW) && (digitalSLAVE==1)){
     delay(100);        //slave stuff
+    setup();   //this is for changing digital slave back to 0, once team4 is finished
   }
 }
