@@ -5,7 +5,9 @@
 
 #define I2C_PORT i2c0
 #define SLAVE_ADDR 8
+#define TEAM1 51
 #define TEAM2 52
+#define TEAM3 53
 
 byte x = 255;
 byte PACKET = 0x01;
