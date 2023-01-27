@@ -62,6 +62,7 @@ void loop() {
     Wire.endTransmission(); 
     digitalSLAVE = 1;
     delay(500);
+    setup();
   }
   else if ((switch_val==LOW) && (digitalSLAVE==1)){
     delay(100);        //slave stuff
