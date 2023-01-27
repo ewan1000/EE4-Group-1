@@ -87,4 +87,12 @@ void loop() {
     delay(100);   
     setup();            //slave stuff
   }
+   else{
+    while(1){  
+      digitalWrite(LED_BUILTIN, HIGH);  //Board LED goes high
+      delay(500);
+      digitalWrite(LED_BUILTIN, LOW);  //Board LED goes low  
+      delay(500); 
+    }  
+  }
 }
