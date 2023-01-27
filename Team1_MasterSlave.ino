@@ -8,7 +8,7 @@
 #define TEAM1 51
 #define TEAM2 52
 
-byte x = 10;
+byte Z_Offset = 10;
 byte MT1 = 0x03;  //Master transfer 1
 byte MT2 = 0xAA;
 int SLAVE_INIT;
