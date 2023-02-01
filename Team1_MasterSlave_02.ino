@@ -28,6 +28,7 @@ void setup() {
     Wire.end();
     Wire.begin(); 
     digitalWrite(LED_BUILTIN, HIGH);  //Board LED goes high
+    }
   }   // start serial for output
   else if ((digitalRead(switch_pin)==LOW) && (MasterInit==0)) {     //SLAVE SETUP    //Potential issue: Does the setup function only get called once??
     Wire.end();
