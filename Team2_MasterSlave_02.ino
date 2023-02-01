@@ -12,10 +12,16 @@
 byte MT1 = 3;  //Master transfer 1
 int MasterInit=0;
 int switch_pin = 0;
+int R_LED = 15;
+int G_LED = 14;
+int Y_LED = 13;
 
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
   pinMode(switch_pin,INPUT);
+  pinMode(R_LED, OUTPUT);
+  pinMode(G_LED, OUTPUT);
+  pinMode(Y_LED, OUTPUT);
   gpio_set_function(4, GPIO_FUNC_I2C);
   gpio_set_function(5, GPIO_FUNC_I2C);
   gpio_pull_up(4);
@@ -28,13 +34,25 @@ void setup() {
   }   // start serial for output
   else if ((digitalRead(switch_pin)==LOW) && (MasterInit==0)) {             //This is SLave Statement //This is STATE 1 for team2
     Wire.end();
+    digitalWrite(LED_BUILTIN, LOW);  //Board LED goes LOW
+    delay(100);
+    digitalWrite(LED_BUILTIN, HIGH);  //Board LED goes high
+    delay(100);
+    digitalWrite(LED_BUILTIN, LOW);  //Board LED goes LOW
+    delay(100);
+    digitalWrite(LED_BUILTIN, HIGH);  //Board LED goes high
+    delay(100);
+    digitalWrite(LED_BUILTIN, LOW);  //Board LED goes LOW
+    delay(100);
     Serial.println(1);
     Wire.begin(TEAM2);                                                    //MAYBE NEED TO PUT IN A WIRE.END(), POTENTIALLY NOT ENDING I2C BUS CORRECTLY
     Serial.begin(9600); 
     Wire.onReceive(receiveEvent);
     }   // start serial for output
   else {
-    Wire.end();                                                //need to end the I2C connection with wire.end, otherwise it remains
+    Wire.end();    
+    digitalWrite(LED_BUILTIN, LOW);  //Board LED goes LOW
+    delay(100);
     Serial.println(4);
   }  
 
@@ -57,9 +75,9 @@ void loop() {
   //TEAM2 IS MASTER
   if ((digitalRead(switch_pin)==HIGH) && (MasterInit==1)){              //code to execute when master
     //Master Handover to Team 3
-    digitalWrite(LED_BUILTIN, LOW);  //Board LED goes high
-    delay(1000);
-    digitalWrite(LED_BUILTIN, HIGH);  //Board LED goes high
+    digitalWrite(G_LED, HIGH);  //Board LED goes HIGH
+    digitalWrite(Y_LED, LOW);  //Board LED goes LOW
+    digitalWrite(R_LED, LOW);  //Board LED goes LOW
     delay(1000);
     Wire.beginTransmission(TEAM1);  //This is sending handover to team2, Master1 writing to slave2
     Wire.write(MT1);             
@@ -70,19 +88,18 @@ void loop() {
   }
   //TEAM2 IS SLAVE
   else if ((digitalRead(switch_pin)==LOW) && (MasterInit==0)){
+    digitalWrite(G_LED, LOW);  //Board LED goes LOW
+    digitalWrite(Y_LED, HIGH);  //Board LED goes HIGH
+    digitalWrite(R_LED, LOW);  //Board LED goes LOW
     delay(100);   
-    Serial.println(6);   
-    delay(2000);                                                                      //setup maybe getting called too quickly
+    Serial.println(6);                                                                       //setup maybe getting called too quickly
     setup();            //slave stuff
   }
    else{ 
-      digitalWrite(LED_BUILTIN, HIGH);  //Board LED goes high
-      delay(100);
-      digitalWrite(LED_BUILTIN, LOW);  //Board LED goes low  
-      delay(100);  
-      digitalWrite(LED_BUILTIN, HIGH);  //Board LED goes high
-      delay(100);
-      digitalWrite(LED_BUILTIN, LOW);  //Board LED goes low  
+     
+      digitalWrite(G_LED, LOW);  //Board LED goes LOW
+      digitalWrite(Y_LED, LOW);  //Board LED goes LOW
+      digitalWrite(R_LED, HIGH);  //Board LED goes high     
       delay(100);  
       setup();
   }
