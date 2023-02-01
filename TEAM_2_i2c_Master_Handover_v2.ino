@@ -26,11 +26,13 @@ void setup() {
   gpio_pull_up(5); 
   switch_val = digitalRead(switch_pin);
   if (MasterInit==1){    //switch stays high  //This is MASTER Statement
+    Wire.end();
     Wire.begin(); 
     Serial.begin(9600);
                                                                         //Potential issue: Does the setup function only get called once??
   }   // start serial for output
   else {             //This is SLave Statement
+    Wire.end();
     Wire.begin(TEAM2);
     Serial.begin(9600); 
     Wire.onReceive(receiveEvent);
@@ -70,7 +72,6 @@ void loop() {
       delay(500);
       digitalWrite(LED_BUILTIN, LOW);  //Board LED goes low  
       delay(500);
-      Wire.end();
       Serial.print("Wait ");
     }
     digitalWrite(LED_BUILTIN, HIGH);  //Board LED goes high for Master operation
@@ -91,7 +92,6 @@ void loop() {
     Wire.write(MT1);        
     //Wire.write(MT2);     
     Wire.endTransmission(); 
-    Wire.end();
     MasterInit = 0;
     delay(500);
     setup();
@@ -113,7 +113,6 @@ void loop() {
     else {
       Serial.print("Wait s2");
       delay(100);
-      Wire.end();  
       setup();
     }
   }
