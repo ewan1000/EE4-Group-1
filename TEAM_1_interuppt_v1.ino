@@ -71,10 +71,10 @@ void readSwitch() {
 }
 
 void loop() {
-  //TEAM2 IS MASTER
+  //TEAM1 IS MASTER
   if (MasterInit==1){             //code to execute when master
-    Serial.println("Master! ");
-    if (MASTERswitch == 0) {
+    Serial.println("Master! ");            
+    if (MASTERswitch == 0) {        //Switch off, waiting for switch to run and send data
       digitalWrite(LED_BUILTIN, HIGH);  //Board LED goes high
       delay(500);
       digitalWrite(LED_BUILTIN, LOW);  //Board LED goes low  
@@ -82,7 +82,7 @@ void loop() {
       Serial.println("Master T1 Wait ");
       setup(); 
     }
-    else if (MASTERswitch == 1){
+    else if (MASTERswitch == 1){                //master, sending data
       Serial.println("Done!");
       digitalWrite(LED_BUILTIN, HIGH);  //Board LED goes high for Master operation
 
@@ -106,13 +106,13 @@ void loop() {
       Serial.println("Team1 sends byte to Team2 ");
       delay(1000);
       MasterInit = 0;
-      setup();
+      setup();                                      //only need to switch high to make master, otherwise it is slave 
     }
   }
   // TEAM 1 IS SLAVE
-  else if (MasterInit == 0) {
+  else if (MasterInit == 0) {         
     delay(100); 
-    if (MASTERswitch == 1){
+    if (MASTERswitch == 1){                
       Serial.println("Slave 1 switch on ");
       delay(100);
       digitalWrite(LED_BUILTIN, HIGH);  //Board LED goes high
