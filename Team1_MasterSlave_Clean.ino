@@ -14,8 +14,8 @@ byte Z_Offset = 100;
 byte MT1 = 3;  //Master transfer 1 byte, stage handover byte
 //byte MT2 = 0xAA;
 
-int R_LED_MASTER = 15;
-int G_LED_SLAVE = 14;
+int R_LED_MASTER = 16;
+int G_LED_SLAVE = 17;
 int MASTERswitchSTATE;  //the switch only turns the MCU into a master, slave is activated automatically
 int MasterInit = 1;      //Team1 is initially master 
 int switch_pin = 1;  //switch is GPIO 1
