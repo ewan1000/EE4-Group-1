@@ -37,7 +37,7 @@ void setup() {
   Wire.begin(Z_MOTION);                   // join i2c bus with address #4
   Wire.onReceive(receiveEvent);           // register event
   Serial.begin(9600);                     // start serial for output
-  Serial.printf("Slave Sketch here...");  // Serial Skave function check
+  Serial.printf("Slave Sketch here...");  // Serial Slave function check
 }
 
 void loop() {                
