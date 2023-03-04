@@ -1,14 +1,10 @@
-// Slave Reader running on Device No.2 (Use with corresponding Master Writer running on Device No.1)
-
-// function that executes whenever data is received from master
+//Z-Axis Movement Code
 
 #include "hardware/i2c.h"
 #include <AccelStepper.h>
 #include <Wire.h> 
 
-#define motorInterfaceType 1
-
-// define pin number allocation
+#define motorInterfaceType 1 //required by AccelStepper type
 #define Z_MOTION 56       // z-motion i2c address
 #define dirPin 16         // motor direction
 #define stepPin 17        // step enable
@@ -18,11 +14,9 @@
 #define upperLimit_pin 0
 #define lowerLimit_pin 1
 
-
 const int stepsPerRevolution = 3200;
 int Z_Origin = 0; //not at origin when z equals 0
 int Z_Failsafe = 0;
-
 AccelStepper stepper = AccelStepper(motorInterfaceType, stepPin, dirPin);
 
 void setup()
@@ -58,18 +52,31 @@ void loop()
 void readUpper_LimitSwitch()  //used for indicating that the rack has reached the homepoint
   {
     stepper.setSpeed(0);  //ideally stops motor from moving 
-    stepper.runSpeed();   //these may need to be inside while statements
+    stepper.runSpeed();   //THESE MAY NEED TO BE INSIDE WHILE STATEMENTS TO WORK
+    //stepper.stop();   //could try this again to see if it works
     stepper.setCurrentPosition(0);   
     Z_Origin = 1;
     Serial.println("At the origin");
-    requestEvent(); //calling this to send a 1 once    
+    requestEvent(); //calling this to send a 1 once, so that master doesn't get stuck in requestFrom loop
     //interrupt triggered when upper limit reached, resets position to 0  
   } 
 
 void readLower_LimitSwitch()  
-  { 
-    Z_Failsafe = 1;
+  {
     Serial.println("At end of Z-Axis");
+    Z_Failsafe = 1;
+    stepper.setSpeed(0);         // stops motor movement when hits failsafe
+    stepper.runSpeed();
+    int HitOrigin = digitalRead(upperLimit_pin);
+    while (HitOrigin == 0)
+      {
+        stepper.setSpeed(-100);         // motor moves back towards origin 
+        stepper.runSpeed();
+        HitOrigin = digitalRead(upperLimit_pin);  //once this goes high, this will also put the upper limit switch interrupt to the end of the ISR queue
+      }  
+    Serial.println("PROGRAM ABORTED");
+    exit(0);    //Think this stops the program from running, can double check in lab
+    //want to exit program after hitting failsafe and motor is back at origin for restart
   } 
 
 int Displacement_Step_Converter_Z(int displacement_um) //function returns the step value after converting um input displacement
@@ -112,10 +119,10 @@ void receiveEvent(int howMany) // howMANY is always equal to no. of bytes receiv
 
     int z1;                          
     memcpy(&z1, &buf[1], sizeof(z1));    //decoding the character to an int, from elements 1-4 of the buffer, since int=4 bytes
-    Serial.print("z1:\t");
+    Serial.print("z-coord:\t");
     Serial.println(z1);                //print message to check
     z1 = Displacement_Step_Converter_Z(z1);
-    Serial.print("Motor Steps:"); 
+    Serial.print("Motor Steps:\t"); 
     Serial.println(z1);
 
     //This set of if/else if statement is for typical movement
@@ -123,7 +130,7 @@ void receiveEvent(int howMany) // howMANY is always equal to no. of bytes receiv
       {
         while((stepper.currentPosition() != z1) && (Z_Failsafe==0) && (Z_Origin==0))    //move down from origin when not at position and not triggered failsafe
           {
-            stepper.setSpeed(150);         // sets speed in forward direction of stepper 
+            stepper.setSpeed(1500);         // sets speed in forward direction of stepper 
             stepper.runSpeed();             // runs the step as per speed
           }
       }
@@ -131,41 +138,15 @@ void receiveEvent(int howMany) // howMANY is always equal to no. of bytes receiv
       {
        while((stepper.currentPosition() != z1) && (Z_Origin==0) && (Z_Failsafe==0))    //move up from origin when not at position and not triggered failsafe
           {
-            stepper.setSpeed(-150);         // sets speed in forward direction of stepper 
+            stepper.setSpeed(-1500);         // sets speed in forward direction of stepper 
             stepper.runSpeed();             // runs the step as per speed
           }
       }  
-
-    //This if/else occurs when lower limit switch (failsafe) has been triggered
-    if (Z_Failsafe==1 && Z_Origin==0)
-      {
-        while(Z_Origin==0)
-          { 
-            stepper.setSpeed(-50);         // motor has hit lower limitswitch, moves back to origin slowly
-            stepper.runSpeed();                   
-          }           
-      }
-    else 
-      {                        
-      }                               
-    
-    //can't include these in same if else structure as it will not enter the else if when Z_Origin changes value
-    
-    //This if/else occurs when upper limit switch has been triggered, after the lower limit switch has been hit
-    if (Z_Failsafe==1 && Z_Origin==1)
-      {
-        stepper.setSpeed(0);         // motor has hit upper limitswitch now, stop at origin 
-        stepper.runSpeed(); 
-        stepper.setCurrentPosition(0);  //Could potentially remove this loop 
-      }  
-    else 
-      {
-      }  
     Z_Failsafe=0;
     Z_Origin=0; 
-    delay(1000); 
+    delay(100); 
     stepper.setCurrentPosition(0);
-    Serial.println("Donezo"); 
+    Serial.println("Current Coordinate finished"); 
 
   }
 
