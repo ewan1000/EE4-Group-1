@@ -97,7 +97,7 @@ void loop()
     //TEAM1 has been initialised as MASTER
     if (MasterInit==1)
       {        
-        Serial.println("Master! ");            //Prints to serial monitor
+        Serial.println("Master! ");            //This condition is for swapping team's head
         if (MASTERswitchSTATE == 0) 
           {
             digitalWrite(LED_BUILTIN, HIGH);  //Board LED goes high for Master operation
@@ -114,12 +114,9 @@ void loop()
             digitalWrite(G_LED_SLAVE, LOW);  //Slave LED goes LOW
             digitalWrite(R_LED_MASTER, HIGH);  //Master state LED goes HIGH
 
-            int coord_arr[] = {50000,-30000}; 
+            int coord_arr[] = {62000,10000}; 
             int coord_num = sizeof(coord_arr)/4;  //since coord always integer, can divide total number of bytes to find number of elements
             Serial.print("Writing message:\n");
-
-            int team1_offset = 22000;
-            z_offset(team1_offset);
 
             for (int i=0;i<coord_num;i++)
               {   
@@ -128,23 +125,18 @@ void loop()
 
             //ENTER YOUR TEAMS CODE HERE
             //MAX Z-Offset is 63000 um
-
                 Serial.println("Now let's wait to simulate doing stuff");
                 delay(1000);
                 Serial.println("Humdy humdy hum");
                 Serial.println("Dimdy Dumdy dee");
                 Serial.println("We did a thing!!");
-                delay(100);
-
-                Z_Coord_Sender(-1*coord_arr[i]);     
-                Serial.println("Moving back to z_offset");                                           
+                delay(100);                                      
               }
-            z_zeroing();
+            Z_Coord_Sender(0); //this is to reset to home point after team is finished
             Serial.println("Finished, now going to origin");
             Serial.println("Terminating transmission...");
             Serial.println("Transmission terminated.");
                 
-          
             //Master Handover to Team 2
             delay(2000);
             Wire.beginTransmission(TEAM2);  //This is sending handover to team2, Master1 writing to slave2
