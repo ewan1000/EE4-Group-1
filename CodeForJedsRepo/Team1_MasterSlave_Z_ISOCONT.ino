@@ -170,7 +170,6 @@ void loop()
 
             for (int i=0;i<coord_num;i++)
               {   
-               // if(){
                 Z_Coord_Sender(coord_arr[i]);
 
               //isActive = digitalRead(trigger);
@@ -243,10 +242,6 @@ void loop()
                   }
 
                 }
-               // }
-               // else{
-
-               // }
                 Z_Coord_Sender(zOffsetHIGH);
               }
               
